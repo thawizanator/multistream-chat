@@ -75,7 +75,7 @@ $(document).ready(function(){
 		counter++;
 		
 		$.each( channels_use, function(i,v){
-			$.ajax({url: "https://api.twitch.tv/kraken/streams/"+v+"?client_id=ycd44mma1h5bhkngprautinnw1bezx", 
+			$.ajax({url: "https://api.twitch.tv/kraken/streams/"+v+"?client_id=_client-id-from-twitch_", 
 				success: function(result){
 					
 					if(result["stream"]==null){
