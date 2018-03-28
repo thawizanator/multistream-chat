@@ -24,88 +24,65 @@ iframe {
 #success{
 	color: #0087BD;
 }
+#channel_icons {
+  background-color: #4c177d;
+  height: 55px;
+  width:100%;
+  border-radius: 50px 20px;
+  text-align: center;
+}
+
+.standard {
+	border-radius: 60% !important;
+	border-radius: 50px 20px;
+	height: 35px;
+	margin: 5px 10px;
+}
+.offline {	
+	border: 4px solid red;
+}
+.online {	
+	border: 4px solid #00ff00;
+}
+.chat {
+ float: left;
+ padding: 0px 0px;
+ margin: 0px 0px;
+}
 </style>
 </head>
 <body>
-	<span id="counter"></span> - <span id="success"></span> <small><i>(time <span id="time"></span>)</i></small>
-	<table align="center" height="96%">
-		<tr>
-			<td id="kerjo">
-			<center><b>Kerjo</b> <span id="kerjolive" class="live"><b>&squf;</b></span></center>
-				<iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/kerjo/chat?darkpopout" height="100%" width="254"></iframe>
-			</td>
-			<td id="skippyfire">
-			<center><b>SkippyFiRe</b> <span id="skippyfirelive" class="live"><b>&squf;</b></span></center>
-				<iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/skippyfire/chat?darkpopout" height="100%" width="254"></iframe>
-			</td>
-			<div class="neutral2121">
-			<td id="neutral2121">
-			<center><b>Neutral2121</b> <span id="neutral2121live" class="live"><b>&squf;</b></span></center>
-				<iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/neutral2121/chat?darkpopout" height="48%" width="254"></iframe>
-			</div>
-			<div class="cviddy">	
-			<center><b>Cviddy</b> <span id="cviddylive" class="live"><b>&squf;</b></span></center>
-				<iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/cviddy/chat?darkpopout" height="48%" width="254"></iframe>
-			</div>
-			</td>
-			<td id="scurker">
-			<center><b>Scurker</b> <span id="scurkerlive" class="live"><b>&squf;</b></span></center>
-				<iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/scurker/chat?darkpopout" height="100%" width="254"></iframe>
-			</td>
-			<td id="literally_a_cat">
-			<center><b>literally_a_cat <span id="literally_a_catlive" class="live"><b>&squf;</b></span></b></center>
-				<iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/literally_a_cat/chat?darkpopout" height="100%" width="254"></iframe>
-			</td>
-		</tr>
-	</table>
+	<div id="channel_icons"></div>
+	<div id="chats"></div>
 	<script>
-$(document).ready(function(){
-
-	var channels_use = ["kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz"];
-	var firstRun = false;
-	var counter = 0;
-	var success = 0;
-	
-	if(!firstRun){		
-		checkOnline();
-		firstRun = true;
-	}
-	
-	function checkOnline(){
-		counter++;
-		
-		$.each( channels_use, function(i,v){
-			$.ajax({url: "https://api.twitch.tv/kraken/streams/"+v+"?client_id=_client-id-from-twitch_", 
-				success: function(result){
-					
-					if(result["stream"]==null){
-						$("span#"+v+"live").css('color', 'red');
-						$("#"+v).css("border","3px solid black");
-						
-					}else if(result["stream"]["stream_type"] == "live"){
-						success++;
-						$("span#"+v+"live").css('color', 'green');	// square box
-						
-						switch(v){
-							case "neutral2121":
-								$(".neutral2121").css("border","3px solid green");
-							break;
-							case "cviddy":
-								$(".cviddy").css("border","3px solid green");
-							break;
-							default:
-								$("td#"+v).css("border","3px solid green");
-						}
-					}
-			}});
-		});//ends each
-		$("#counter").html(counter);
-		$("#success").html(success);
-		var formula = (counter*30)/60;
-		$("#time").html(formula);
-	}
-	setInterval(checkOnline, 30000);
-});
+		$(document).ready(function(){
+			var validate = "client id goes here",
+				kraken = "https://api.twitch.tv/kraken/";
+			var channels_use = ["kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
+			
+			$.each( channels_use, function(i,v){
+				$.ajax({
+					url: kraken+"streams/"+v+"?client_id="+validate, 
+					success: function(result){
+							if(result["stream"]==null){			// DO SOMETHING IF NOT LIVE
+								$.ajax({
+									url: kraken+"channels/"+v+"?client_id="+validate, 
+									success: function(resultb){
+											
+											if(!resultb["error"]){		//	DO SOMETHING IF CHANNEL FOUND
+												
+												if(resultb["logo"]){
+													$('<img src="'+resultb["logo"]+'" id='+v+'"_icon" class="standard offline">').appendTo("#channel_icons");
+												}else{	alert("error finding channel!");	}										
+											}
+								}});			
+							}else if(result["stream"]["stream_type"] == "live"){		//	DO SOMETHING IF LIVE
+								$('<img src="'+result["stream"]["channel"]["logo"]+'" id='+v+'"_icon" class="standard online">').appendTo("#channel_icons");						
+								$('<div class="chat"><b><center>'+v+'</center></b><br><iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/'+v+'/chat?darkpopout" height="85%" width="254"></iframe></div>').appendTo("#chats");
+							}
+				}});
+			});//ends each
+		});
 </script>
 </body>
 </html>
