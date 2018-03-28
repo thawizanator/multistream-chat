@@ -55,10 +55,26 @@ iframe {
 	<div id="channel_icons"></div>
 	<div id="chats"></div>
 	<script>
+	/*	TO DO
+	
+		- SET INTERVAL TO CHECK IF USER IS LIVE
+		- ADD REMOVE TO USER CHAT ELEMEMENT setInterval(myTimer, 1000);
+		- I THINK ITS 
+	
+	
+	*/
 		$(document).ready(function(){
-			var validate = "client id goes here",
-				kraken = "https://api.twitch.tv/kraken/";
+			var validate = "",
+				kraken = "https://api.twitch.tv/kraken/",
+				first_load = true;
 			var channels_use = ["kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
+			
+			
+			if(first_load){
+				
+			}else{
+			
+			}
 			
 			$.each( channels_use, function(i,v){
 				$.ajax({
@@ -78,10 +94,16 @@ iframe {
 								}});			
 							}else if(result["stream"]["stream_type"] == "live"){		//	DO SOMETHING IF LIVE
 								$('<img src="'+result["stream"]["channel"]["logo"]+'" id='+v+'"_icon" class="standard online">').appendTo("#channel_icons");						
-								$('<div class="chat"><b><center>'+v+'</center></b><br><iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/'+v+'/chat?darkpopout" height="85%" width="254"></iframe></div>').appendTo("#chats");
+								$('<div id="'+v+'_box" class="chat"><b><center>'+v+'</center></b><br><iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/'+v+'/chat?darkpopout" height="85%" width="254"></iframe></div>').appendTo("#chats");
 							}
 				}});
 			});//ends each
+			
+			
+			
+			
+			
+			
 		});
 </script>
 </body>
