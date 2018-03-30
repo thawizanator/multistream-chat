@@ -59,13 +59,17 @@ iframe {
 </style>
 </head>
 <body>
-	<div id="channel_icons"><div id="clock" class="clock"></div></div>
+	<div id="channel_icons"><div id="clock" class="clock"><br><span id="counter"></span></div></div>
 	<div id="chats"></div>
 	<script>
 	var validate = "ycd44mma1h5bhkngprautinnw1bezx",
 		kraken = "https://api.twitch.tv/kraken/",
-		first_load = true;
-	var channels_use = ["blitzfire911", "kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
+		first_load = true,
+		counter = 0;
+		
+		//		HERE YOU CAN ADD WHICH EVER TWICH CHANNEL YOU WANT,, BUT I WOULDN'T DO TO MANY
+		//		AS IT MAY SCREW SOMETHING UP, THIS IS THE MOST I HAVE TRIED
+	var channels_use = ["thawizanator", "blitzfire911", "kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
 	
 //		time functions	
 	function startTime() {
@@ -122,6 +126,7 @@ iframe {
 		
 		
 		function timer_update(){
+			counter++;
 			$.each(channels_use, function(i,v){
 				$.ajax({
 					url: kraken+"streams/"+v+"?client_id="+validate, 
@@ -131,8 +136,10 @@ iframe {
 							$("#"+v+"_icon").addClass("offline");
 							$("#"+v+"_box").hide();
 						}else if(resultd["stream"]["stream_type"] == "live"){		//	DO SOMETHING IF LIVE
+							$("#"+v+"_icon").hide();
 							$("#"+v+"_icon").removeClass("offline");
 							$("#"+v+"_icon").addClass("online");
+							$("#"+v+"_icon").show();
 							
 							//	this is to put the icon to the far left ...... hopefully
 							//$('<img src="'+result["stream"]["channel"]["logo"]+'" id="'+v+'_icon" class="standard online">').appendTo("#channel_icons");
@@ -141,8 +148,9 @@ iframe {
 						}
 				}});
 			});
+			var est_time = (counter*5)/60;
 		}
-		});
+	});
 </script>
 </body>
 </html>
