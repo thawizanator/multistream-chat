@@ -49,61 +49,99 @@ iframe {
  padding: 0px 0px;
  margin: 0px 0px;
 }
+.clock{
+	float:right;
+	margin: 15px 5px;
+}
+.hide{
+	display: none;
+}
 </style>
 </head>
 <body>
-	<div id="channel_icons"></div>
+	<div id="channel_icons"><div id="clock" class="clock"></div></div>
 	<div id="chats"></div>
 	<script>
-	/*	TO DO
+	var validate = "ycd44mma1h5bhkngprautinnw1bezx",
+		kraken = "https://api.twitch.tv/kraken/",
+		first_load = true;
+	var channels_use = ["blitzfire911", "kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
 	
-		- SET INTERVAL TO CHECK IF USER IS LIVE
-		- ADD REMOVE TO USER CHAT ELEMEMENT setInterval(myTimer, 1000);
-		- I THINK ITS 
-	
-	
-	*/
-		$(document).ready(function(){
-			var validate = "",
-				kraken = "https://api.twitch.tv/kraken/",
-				first_load = true;
-			var channels_use = ["kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
-			
-			
-			if(first_load){
-				
-			}else{
-			
-			}
-			
+//		time functions	
+	function startTime() {
+		var today = new Date();
+		var h = today.getHours();
+		var m = today.getMinutes();
+		var s = today.getSeconds();
+		m = checkTime(m);
+		s = checkTime(s);
+		$("#clock").html(h + ":" + m + ":" + s);
+		var t = setTimeout(startTime, 500);
+	}
+	function checkTime(i) {
+		if (i < 10) {i = "0" + i};  // add zero in front of numbers < 10
+		return i;
+	}
+
+	$(document).ready(function(){
+		startTime();
 			$.each( channels_use, function(i,v){
 				$.ajax({
 					url: kraken+"streams/"+v+"?client_id="+validate, 
 					success: function(result){
-							if(result["stream"]==null){			// DO SOMETHING IF NOT LIVE
+							if(result["stream"]==null){			// DO SOMETHING IF NOT LIVE							
+								if($("#"+v+"_icon").length){	// 	REMOVE ICON & CHAT IF EXISTS
+									$("#"+v+"_icon").remove();
+									$("#"+v+"_chat").remove();
+								}
 								$.ajax({
 									url: kraken+"channels/"+v+"?client_id="+validate, 
-									success: function(resultb){
-											
-											if(!resultb["error"]){		//	DO SOMETHING IF CHANNEL FOUND
-												
-												if(resultb["logo"]){
-													$('<img src="'+resultb["logo"]+'" id='+v+'"_icon" class="standard offline">').appendTo("#channel_icons");
-												}else{	alert("error finding channel!");	}										
-											}
-								}});			
+									success: function(resultb){											
+										if(!resultb["error"]){		//	DO SOMETHING IF CHANNEL FOUND												
+											if(resultb["logo"]){
+												$('<img src="'+resultb["logo"]+'" id="'+v+'_icon" class="standard " alt="'+v+'">').appendTo("#channel_icons");
+												$('<div id="'+v+'_box" class="chat"><b><center>'+v+'</center></b><br><iframe frameborder="0" scrolling="no" id='+v+'_chat" src="http://www.twitch.tv/embed/'+v+'/chat?darkpopout" height="85%" width="254"></iframe></div>').appendTo("#chats");
+											}else{	alert("error finding channel!");	}										
+										}
+								}});							
 							}else if(result["stream"]["stream_type"] == "live"){		//	DO SOMETHING IF LIVE
-								$('<img src="'+result["stream"]["channel"]["logo"]+'" id='+v+'"_icon" class="standard online">').appendTo("#channel_icons");						
-								$('<div id="'+v+'_box" class="chat"><b><center>'+v+'</center></b><br><iframe frameborder="0" scrolling="no" id="chat_embed" src="http://www.twitch.tv/embed/'+v+'/chat?darkpopout" height="85%" width="254"></iframe></div>').appendTo("#chats");
+								if($("#"+v+"_icon").length){	// 	REMOVE OFFLINE ICON IF EXISTS
+									$("#"+v+"_icon").remove();
+									$("#"+v+"_chat").remove();
+								}
+								$('<img src="'+result["stream"]["channel"]["logo"]+'" id="'+v+'_icon" class="standard online" alt="'+v+'">').appendTo("#channel_icons");						
+								$('<div id="'+v+'_box" class="chat"><b><center>'+v+'</center></b><br><iframe frameborder="0" scrolling="no" id='+v+'_chat" src="http://www.twitch.tv/embed/'+v+'/chat?darkpopout" height="85%" width="254"></iframe></div>').appendTo("#chats");
 							}
 				}});
 			});//ends each
-			
-			
-			
-			
-			
-			
+
+		setInterval(timer_update, 5000);
+
+		
+		
+		
+		
+		function timer_update(){
+			$.each(channels_use, function(i,v){
+				$.ajax({
+					url: kraken+"streams/"+v+"?client_id="+validate, 
+					success: function(resultd){
+						if(resultd["stream"] == null){			// DO SOMETHING IF NOT LIVE	
+							$("#"+v+"_icon").removeClass("online");
+							$("#"+v+"_icon").addClass("offline");
+							$("#"+v+"_box").hide();
+						}else if(resultd["stream"]["stream_type"] == "live"){		//	DO SOMETHING IF LIVE
+							$("#"+v+"_icon").removeClass("offline");
+							$("#"+v+"_icon").addClass("online");
+							
+							//	this is to put the icon to the far left ...... hopefully
+							//$('<img src="'+result["stream"]["channel"]["logo"]+'" id="'+v+'_icon" class="standard online">').appendTo("#channel_icons");
+							
+							$("#"+v+"_box").show();
+						}
+				}});
+			});
+		}
 		});
 </script>
 </body>
