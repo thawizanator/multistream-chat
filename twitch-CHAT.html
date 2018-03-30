@@ -36,7 +36,7 @@ iframe {
 	border-radius: 60% !important;
 	border-radius: 50px 20px;
 	height: 35px;
-	margin: 5px 10px;
+	margin: 6px 10px;
 }
 .offline {	
 	border: 4px solid red;
@@ -123,7 +123,9 @@ iframe {
 				}});
 			});//ends each
 
-		setInterval(timer_update, 5000);
+			//		ORIGINALLY HAD SET TO 5 SECONDS, NOT SURE IF ITS A GOOD IDEA
+			//		SPAMMING TWITCH THAT MUCH FOR DATA, SO GONNA TRY EVERY 20 SECONDS
+		setInterval(timer_update, 20000);
 
 		
 		
