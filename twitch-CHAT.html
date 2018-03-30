@@ -56,10 +56,14 @@ iframe {
 .hide{
 	display: none;
 }
+#counter{
+	float: left;
+	margin: 15px 5px;
+}
 </style>
 </head>
 <body>
-	<div id="channel_icons"><div id="clock" class="clock"><br><span id="counter"></span></div></div>
+	<div id="channel_icons"><div id="clock" class="clock"></div><span id="counter"></span></div>
 	<div id="chats"></div>
 	<script>
 	var validate = "ycd44mma1h5bhkngprautinnw1bezx",
@@ -69,7 +73,7 @@ iframe {
 		
 		//		HERE YOU CAN ADD WHICH EVER TWICH CHANNEL YOU WANT,, BUT I WOULDN'T DO TO MANY
 		//		AS IT MAY SCREW SOMETHING UP, THIS IS THE MOST I HAVE TRIED
-	var channels_use = ["thawizanator", "blitzfire911", "kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat", "games4kickz", "xx2shy"];	
+	var channels_use = ["thawizanator", "kerjo", "skippyfire", "neutral2121", "cviddy", "scurker", "literally_a_cat"];	
 	
 //		time functions	
 	function startTime() {
@@ -148,8 +152,8 @@ iframe {
 						}
 				}});
 			});
-			var est_time = (counter*5)/60;
-			$("#counter").html(est_time);
+			var est_time = ((counter*5)/60).toFixed(2);
+			$("#counter").html(est_time+" min");
 		}
 	});
 </script>
