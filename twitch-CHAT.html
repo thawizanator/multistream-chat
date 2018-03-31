@@ -122,14 +122,17 @@ iframe {
 							}
 				}});
 			});//ends each
+			
+			if(first_load){
+				setInterval(timer_update, 5000);
+				first_load = false;
+			}
 
+			
 			//		ORIGINALLY HAD SET TO 5 SECONDS, NOT SURE IF ITS A GOOD IDEA
 			//		SPAMMING TWITCH THAT MUCH FOR DATA, SO GONNA TRY EVERY 20 SECONDS
 		setInterval(timer_update, 20000);
 
-		
-		
-		
 		
 		function timer_update(){
 			counter++;
@@ -155,7 +158,7 @@ iframe {
 				}});
 			});
 			var est_time = ((counter*5)/60).toFixed(2);
-			$("#counter").html(est_time+" min");
+			$("#counter").html(est_time+" min<br>("+counter+")");
 		}
 	});
 </script>
